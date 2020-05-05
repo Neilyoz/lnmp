@@ -1,5 +1,5 @@
-# docker 19.03.0+ ===> 3.8
-version: '3.8'
+# docker 19.03.0+ ===> 3.0
+version: '3.0'
 
 # 服务相关
 services:
