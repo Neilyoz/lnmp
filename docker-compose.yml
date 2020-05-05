@@ -1,0 +1,66 @@
+# docker 19.03.0+ ===> 3.8
+version: '3.8'
+
+# 服务相关
+services:
+  # redis 服务
+  redis-db:
+    build: ./config/redis/ # 指定 Dockerfile 位置
+    ports:
+      - '6379:6379' # 映射端口 本地机器端口: 容器端口
+    volumes:
+      - ./data/redis:/data # 数据保存的路径
+      - ./config/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro # redis配置选项 "本地配置: 容器配置"
+    restart: always
+
+  # nginx 配置
+  nginx:
+    build: ./config/nginx/
+    depends_on:
+      - php-fpm
+    links:
+      - php-fpm:php-fpm
+    volumes:
+      - ./app:/data/wwwroot
+      - ./config/nginx/certs:/etc/nginx/certs # 要开443端口需要将对应的加密文件
+      - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro # nginx配置文件映射
+      - ./config/nginx/conf.d:/etc/nginx/conf.d:ro # 虚拟机配置文件映射
+    ports:
+      - '80:80'
+      - '443:443'
+    restart: always
+    command: nginx -g 'daemon off;'
+
+  # php 配置
+  php-fpm:
+    build: ./config/php-fpm/
+    ports:
+      - '9000:9000'
+    links:
+      - mysql-db:mysql-db
+      - redis-db:redis-db
+    volumes:
+      - ./app:/data/wwwroot:rw
+      # 当前php配置文件,可以拷贝修改php-dev.ini
+      - ./config/php-fpm/php.ini:/usr/local/etc/php/php.ini:ro
+      - ./config/php-fpm/php-fpm.conf:/usr/local/etc/php-fpm.conf:ro
+      - ./config/php-fpm/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
+    restart: always
+    command: php-fpm
+
+  # 数据库配置
+  mysql-db:
+    build: ./config/mysql/
+    ports:
+      - '3306:3306'
+    volumes:
+      - ./data/mysql:/var/lib/mysql:rw
+      - ./data/mysql:/var/lib/mysql-logs:rw
+      - ./config/mysql/conf.d:/etc/mysql/conf.d:ro
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: '' # 默认数据库名 可选
+      MYSQL_USER: mysql # 默认用户 可选
+      MYSQL_PASSWORD: mysql.123 # 默认用户密码, 可更改
+    restart: always
+    command: '--character-set-server=utf8'
