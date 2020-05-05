@@ -11,3 +11,7 @@ RUN ln -snf /usr/share/zoneinfo/$TimeZone /etc/localtime && echo $TimeZone > /et
 # COPY ./scripts/ /data/mysql/backup/scripts/
 # RUN crontab /data/mysql/backup/scripts/mysql-crontab
 # RUN service cron start
+
+LABEL Author="Neilyoz"
+LABEL Version="2020.05"
+LABEL Description="PHP 7.4.5 开发环境镜像. "

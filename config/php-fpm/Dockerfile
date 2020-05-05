@@ -1,5 +1,4 @@
 FROM php:7.4-fpm-alpine3.11
-MAINTAINER neilyoz <neilyoz@foxmail.com>
 
 # 创建时区连接
 ENV TimeZone=Asia/Shanghai
@@ -52,3 +51,7 @@ RUN rm -rf /var/cache/apk/*
 RUN php -m
 
 WORKDIR /data/wwwroot
+
+LABEL Author="Neilyoz"
+LABEL Version="2020.05"
+LABEL Description="PHP 7.4.5 开发环境镜像. "
