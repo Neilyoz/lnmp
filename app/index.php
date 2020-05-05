@@ -2,13 +2,11 @@
 // phpinfo();
 
 $host = "mysql-db";
-$port = "3306";
 
 $username = "root";
 $password = "123456";
 
 $dbname = "demo";
-$charset = "utf8mb4";
 
 $dsn = "mysql:host=$host;dbname=$dbname;";
 
